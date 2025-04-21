@@ -1,12 +1,10 @@
-import { fetchVacancies } from "api/fetchVacancies";
+import axios from "axios";
 import { CircleLoader } from "components/CircleLoader/CircleLoader";
+import VacancyFilters from "components/VacancyFilters/VacancyFilters";
 import VacancyTableItem from "components/VacancyTableItem/VacancyTableItem";
-import { ITEMS_PER_PAGE } from "constants/PaginationTableConstants";
-import { useState, useEffect } from "react";
-import { FilterModal } from "types/FilterModal";
+import { currencies } from "constants/vacancyConstants";
+import { useEffect, useState } from "react";
 import { VacancyItemModel } from "types/VacancyItemModel";
-import { filterVacancies } from "utils/filterVacancies";
-
 
 const VacanciesTable = () => {
   const [vacancies, setVacancies] = useState<VacancyItemModel[]>([]);
@@ -16,65 +14,75 @@ const VacanciesTable = () => {
   /*  */
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] =
-    useState <
-    FilterModal>({
-      tech: "",
-      minSalary: "",
-      maxSalary: "",
-      experience: "",
-      employment: "",
-      sortByDate: "desc",
-    });
+  /*  */
+ const [filters, setFilters] = useState<VacancyFilters>({
+   salaryMin: undefined,
+   salaryMax: undefined,
+   currency: currencies.find((c) => c.default)?.code || "RUR",
+   technologies: [],
+   experience: [],
+   employment: [],
+   orderBy: "publication_time", // допилить
+   itemsPerPage: 20,
+ });
 
-  
 
   useEffect(() => {
-    const loadVacancies = async () => {
-      setLoading(true);
-      const data = await fetchVacancies(currentPage, ITEMS_PER_PAGE);
-      if (data.vacancies.length === 0 && data.totalPages === 0) {
-        setError("Error getting vacancies");
-      }
-      setVacancies(data.vacancies);
-      setTotalPages(data.totalPages);
-      setLoading(false);
-    };
-    loadVacancies();
-  }, [currentPage]);
+    const handleFilterChange = async () => {
+      // API запрос с актуальными фильтрами
+      const params = new URLSearchParams();
+      // Обязательные параметры
+      params.append("page", currentPage.toString());
+      params.append("per_page", filters.itemsPerPage.toString());
+      params.append("order_by", filters.orderBy);
+      params.append("professional_role", "96"); // выдает только вакансии Программист, разработчик
 
+      // Опциональные параметры с проверкой
+      if (filters.salaryMin) {
+        params.append("salaryMin", filters.salaryMin.toString());
+      }
+      if (filters.salaryMax) {
+        params.append("salaryMax", filters.salaryMax.toString());
+      }
+      if (filters.currency) {
+        params.append("currency", filters.currency);
+      }
+      if (filters.technologies.length > 0) {
+        params.append("technologies", filters.technologies.join(","));
+      }
+      if (filters.experience.length > 0) {
+        params.append("experience", filters.experience.join(","));
+      }
+      if (filters.employment.length > 0) {
+        params.append("employment", filters.employment.join(","));
+      }
+
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `https://api.hh.ru/vacancies?${params}`
+        );
+        // Обновление состояния с вакансиями
+        setVacancies(response.data.items);
+        setTotalPages(Math.ceil(response.data.found / filters.itemsPerPage));
+      } catch (error) {
+        console.error(error);
+        setError("Error fetching vacancies");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleFilterChange();
+  }, [
+   filters,currentPage
+  ]);
+  /*  */
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
-
-
-  const handleInputFilter = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    key: string
-  ) => {
-    setFilters((prev) => ({ ...prev, [key]: e.target.value }));
-  };
-
-  const handleSalaryFilterChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: "minSalary" | "maxSalary"
-  ) => {
-    const value = Number(e.target.value);
-
-    if (value < 0 || isNaN(value)) {
-      // Если значение некорректное, сбрасываем в дефолтное
-      e.target.value = key === "minSalary" ? "0" : "";
-      return;
-    }
-
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-  const filteredVacancies = filterVacancies({vacancies,filters});
 
   if (error) {
     return <h1>Error occuried!</h1>;
@@ -90,53 +98,11 @@ const VacanciesTable = () => {
         Нажмите на вакансию, чтобы узнать подробнее
       </h1>
 
-      <div className="flex flex-wrap gap-4 mb-4">
-        <input
-          placeholder="Technology"
-          className="border p-2 rounded"
-          onChange={(e) => handleInputFilter(e, "tech")}
-        />
-        <input
-          placeholder="Min Salary(₽)"
-          type="number"
-          className="border p-2 rounded"
-          onChange={(e) => handleSalaryFilterChange(e, "minSalary")}
-        />
-        <input
-          placeholder="Max Salary(₽)"
-          type="number"
-          className="border p-2 rounded"
-          onChange={(e) => handleSalaryFilterChange(e, "maxSalary")}
-        />
-        <select
-          className="border p-2 rounded"
-          onChange={(e) => handleInputFilter(e, "experience")}
-        >
-          <option value="">Experience</option>
-          <option>Junior</option>
-          <option>Middle</option>
-          <option>Senior</option>
-        </select>
-        <select
-          className="border p-2 rounded"
-          onChange={(e) => handleInputFilter(e, "employment")}
-        >
-          <option value="">Employment</option>
-          <option>Full</option>
-          <option>Part</option>
-          <option>Project</option>
-          <option>Volunteer</option>
-          <option>Probation</option>
-        </select>
-        <select
-          className="border p-2 rounded"
-          onChange={(e) => handleInputFilter(e, "sortByDate")}
-        >
-          <option value="desc">Newest</option>
-          <option value="asc">Oldest</option>
-        </select>
-      </div>
-      {filteredVacancies.length !== 0 ? (
+      <VacancyFilters
+        setFilters={setFilters}
+        filters={filters}
+      />
+      {vacancies.length !== 0 ? (
         <>
           <table className="w-full border border-gray-300">
             <thead>
@@ -150,17 +116,8 @@ const VacanciesTable = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredVacancies.map((vacancy) => {
-                return (
-                  <VacancyTableItem
-                    key={
-                      vacancy.id.toString() +
-                      vacancy.date.toString() +
-                      vacancy.title.toString()
-                    }
-                    vacancy={vacancy}
-                  />
-                );
+              {vacancies.map((vacancy) => {
+                return <VacancyTableItem key={vacancy.id} vacancy={vacancy} />;
               })}
             </tbody>
           </table>

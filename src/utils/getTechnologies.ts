@@ -1,40 +1,5 @@
-const knownTechnologies = [
-  "JavaScript",
-  "TypeScript",
-  "Python",
-  "Java",
-  "C#",
-  "C++",
-  "Go",
-  "Golang",
-  "PHP",
-  "Ruby",
-  "Swift",
-  "Kotlin",
-  "React",
-  "Vue",
-  "Angular",
-  "Node.js",
-  "Next.js",
-  "NestJS",
-  "Express",
-  "Django",
-  "Flask",
-  "Spring",
-  "Bootstrap",
-  "jQuery",
-  "HTML",
-  "CSS",
-  "SASS",
-  "SCSS",
-  "SQL",
-  "MongoDB",
-  "PostgreSQL",
-  "MySQL",
-  ".NET",
-  "QA",
-  "1С",
-];
+import { knownTechnologies } from "constants/technologies";
+
 
 export const getTechnologies = (
   ...texts: (string | undefined)[]

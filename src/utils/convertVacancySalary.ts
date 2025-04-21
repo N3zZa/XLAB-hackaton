@@ -23,7 +23,6 @@ export const convertVacancySalary = (vacancy: VacancyItemModel): string => {
           ? ` - RUB ${convertedVCurTo}`
           : `RUB ${convertedVCurTo}`;
     }
-
     return result;
   } else {
     return "Не указан";
