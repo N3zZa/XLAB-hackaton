@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+    background: #0A101A;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    padding: 0 1rem;
+    font-family: "Ubuntu", sans-serif;
+}
+
+button {
+    cursor: pointer;
+}
+
+.btn-blue {
+    padding: 0.5rem 1rem;
+    background: #0326A9;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-blue:hover {
+    background: #05259E;
+}
+
+.btn-gray {
+    padding: 0.5rem 1rem;
+    background: #282A38;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-gray:hover {
+    background: #343648;
+}
+
+.btn-gray:disabled {
+    opacity: 0.4;
+    cursor: default;
+    background: #282A38;
+}
+
+@media(max-width: 820px) {
+    h1 {
+        font-size: 18px;
+    }
+    p {
+        font-size: 13px;
+    }
+    td {
+        font-size: 14px;
+    }
+}
