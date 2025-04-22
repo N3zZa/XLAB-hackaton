@@ -1,6 +1,6 @@
-import { VacancyChartsModal } from "@/types/VacancyModels";
+import { VacancyChartsModel } from "@/types/VacancyModels";
 
-export const vacanciesByDate = (data: VacancyChartsModal[]) => {
+export const vacanciesByDate = (data: VacancyChartsModel[]) => {
   const grouped: Record<string, number> = {};
 
   data.forEach((v) => {
