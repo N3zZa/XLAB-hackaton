@@ -1,9 +1,20 @@
 import { knownTechnologies } from "constants/technologies";
 
+const TECHNOLOGY_NORMALIZATION: Record<string, string> = {
+  golang: "Go",
+  go: "Golang",
+  js: "JavaScript",
+  javascript: "Js",
+  ts: "TypeScript",
+  typescript: "Ts",
+};
 
-export const getTechnologies = (
-  ...texts: (string | undefined)[]
-): string[] => {
+export const normalizeTechnology = (tech: string): string => {
+  const lowerTech = tech.toLowerCase();
+  return TECHNOLOGY_NORMALIZATION[lowerTech] || tech;
+};
+
+export const getTechnologies = (...texts: (string | undefined)[]): string[] => {
   const result = new Set<string>();
 
   texts.forEach((text) => {
@@ -11,12 +22,10 @@ export const getTechnologies = (
     const lowerText = text.toLowerCase();
 
     knownTechnologies.forEach((tech) => {
-      if (lowerText.includes(tech.toLowerCase())) {
-        // Исключаем дубли Go/Golang
-        if (tech.toLowerCase() === "golang" && result.has("Go")) return;
-        if (tech.toLowerCase() === "go" && result.has("Golang")) return;
-
-        result.add(tech);
+      const lowerTech = tech.toLowerCase();
+      if (lowerText.includes(lowerTech)) {
+        const normalized = normalizeTechnology(tech);
+        result.add(normalized);
       }
     });
   });

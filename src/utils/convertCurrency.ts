@@ -7,7 +7,9 @@ const exchangeRates: Record<Currency, number> = {
   USD: 82,
   EUR: 92,
   BYN: 27,
+  BYR: 27,
   KZT: 0.15,
+  UZS: 0.000254,
 };
 
 export const convertToRUB = (amount: number, currency: Currency): number|null => {

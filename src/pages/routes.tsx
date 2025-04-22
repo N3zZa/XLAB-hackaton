@@ -13,12 +13,12 @@ type AppRoute = RouteObject & {
 
 export const routesPaths = {
   home: '/',
-  coin: '/vacancy/',
+  vacancy: '/vacancy/',
 };
 
 const routes: AppRoute[] = [
   { path: routesPaths.home, element: <HomePage /> },
-  { path: `${routesPaths.coin}:vacancyID`, element: <ItemPage /> },
+  { path: `${routesPaths.vacancy}:vacancyID`, element: <ItemPage /> },
   { path: '*', element: <NotFoundPage /> },
 ];
 

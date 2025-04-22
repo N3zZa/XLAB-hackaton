@@ -1,5 +1,7 @@
 export const knownTechnologies = [
   "JavaScript",
+  "Js",
+  "Ts",
   "TypeScript",
   "Python",
   "Java",
@@ -34,4 +36,5 @@ export const knownTechnologies = [
   ".NET",
   "QA",
   "1С",
+  "Unity",
 ];

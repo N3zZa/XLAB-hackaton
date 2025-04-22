@@ -1,27 +1,16 @@
 import MultiSelect from "components/MultiSelect/MultiSelect";
 import { knownTechnologies } from "constants/technologies";
 import {
-  currencies,
   employments,
   experiences,
 } from "constants/vacancyConstants";
 import { Dispatch, SetStateAction } from "react";
 
-interface VacancyFilters {
-  salaryMin?: number;
-  salaryMax?: number;
-  currency: string;
-  technologies: string[];
-  experience: string[];
-  employment: string[];
-  orderBy: string;
-  itemsPerPage: number;
-}
+
 
 interface VacancyFilters {
   salaryMin?: number;
   salaryMax?: number;
-  currency: string;
   technologies: string[];
   experience: string[];
   employment: string[];
@@ -47,41 +36,32 @@ const VacancyFilters = ({
       <div className="salary-filter">
         <input
           type="number"
+          value={filters.salaryMin ?? ""}
           placeholder="Минимальная зарплата"
-          onChange={(e) =>
+          onChange={(e) => {
+            const value = e.target.value;
+            const numValue = value ? Math.max(0, Number(value)) : undefined;
             setFilters((prev) => ({
               ...prev,
-              salaryMin: Number(e.target.value),
-              page: 1,
-            }))
-          }
-        />
-        <input
-          type="number"
-          placeholder="Максимальная зарплата"
-          onChange={(e) =>
-            setFilters((prev) => ({
-              ...prev,
-              salaryMax: Number(e.target.value),
-              page: 1,
-            }))
-          }
+              salaryMin: numValue,
+              page: 0,
+            }));
+          }}
         />
         <select
-          value={filters.currency}
+          value={filters.orderBy}
           onChange={(e) =>
             setFilters((prev) => ({
               ...prev,
-              currency: e.target.value,
-              page: 1,
+              orderBy: e.target.value,
+              page: 0,
             }))
           }
         >
-          {currencies.map((currency) => (
-            <option key={currency.code} value={currency.code}>
-              {currency.name}
-            </option>
-          ))}
+          <option value="salary_desc">По убыванию дохода</option>
+          <option value="salary_asc">По возрастанию дохода</option>
+          <option value="publication_time">Свежие вакансии</option>
+          <option value="relevance">По соответствию</option>
         </select>
       </div>
 
@@ -93,7 +73,7 @@ const VacancyFilters = ({
           setFilters((prev) => ({
             ...prev,
             technologies: selected,
-            page: 1,
+            page: 0,
           }))
         }
       />
@@ -111,7 +91,7 @@ const VacancyFilters = ({
                 setFilters((prev) => ({
                   ...prev,
                   experience: [e.target.value],
-                  page: 1,
+                  page: 0,
                 }));
               }}
             />
@@ -133,7 +113,7 @@ const VacancyFilters = ({
                 setFilters((prev) => ({
                   ...prev,
                   employment: [e.target.value],
-                  page: 1,
+                  page: 0,
                 }));
               }}
             />
@@ -141,21 +121,6 @@ const VacancyFilters = ({
           </label>
         ))}
       </div>
-
-      {/* Сортировка по дате */}
-      <select
-        value={filters.orderBy}
-        onChange={(e) =>
-          setFilters((prev) => ({
-            ...prev,
-            orderBy: e.target.value,
-            page: 1,
-          }))
-        }
-      >
-        <option value="creation_time_desc">Свежие вакансии</option>
-        <option value="creation_time_asc">Старые вакансии</option>
-      </select>
     </div>
   );
 };

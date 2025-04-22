@@ -1,1 +1,1 @@
-export type Currency = "RUR" | "USD" | "EUR" | "BYN" | "KZT";
+export type Currency = "RUR" | "USD" | "EUR" | "BYN" | "BYR" | "KZT" | "UZS";

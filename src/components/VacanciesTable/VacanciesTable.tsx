@@ -2,7 +2,7 @@ import axios from "axios";
 import { CircleLoader } from "components/CircleLoader/CircleLoader";
 import VacancyFilters from "components/VacancyFilters/VacancyFilters";
 import VacancyTableItem from "components/VacancyTableItem/VacancyTableItem";
-import { currencies } from "constants/vacancyConstants";
+import { useDebounce } from "hooks/useDebounce";
 import { useEffect, useState } from "react";
 import { VacancyItemModel } from "types/VacancyItemModel";
 
@@ -15,57 +15,66 @@ const VacanciesTable = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   /*  */
- const [filters, setFilters] = useState<VacancyFilters>({
-   salaryMin: undefined,
-   salaryMax: undefined,
-   currency: currencies.find((c) => c.default)?.code || "RUR",
-   technologies: [],
-   experience: [],
-   employment: [],
-   orderBy: "publication_time", // допилить
-   itemsPerPage: 20,
- });
+  const [filters, setFilters] = useState<VacancyFilters>({
+    salaryMin: undefined,
+    salaryMax: undefined,
+    technologies: [],
+    experience: [],
+    employment: [],
+    orderBy: "publication_time", // допилить
+    itemsPerPage: 20,
+  });
 
+  const debouncedFilters = useDebounce(filters, 600);
 
   useEffect(() => {
     const handleFilterChange = async () => {
       // API запрос с актуальными фильтрами
-      const params = new URLSearchParams();
-      // Обязательные параметры
-      params.append("page", currentPage.toString());
-      params.append("per_page", filters.itemsPerPage.toString());
-      params.append("order_by", filters.orderBy);
-      params.append("professional_role", "96"); // выдает только вакансии Программист, разработчик
+      const params = new URLSearchParams({
+        page: (currentPage - 1).toString(),
+        per_page: filters.itemsPerPage.toString(),
+        order_by: filters.orderBy,
+        professional_role: "96",
+      });
 
       // Опциональные параметры с проверкой
-      if (filters.salaryMin) {
-        params.append("salaryMin", filters.salaryMin.toString());
+      if (debouncedFilters.salaryMin) {
+        params.append("salary", debouncedFilters.salaryMin.toString());
+        params.append("only_with_salary", "true");
+      } else if (debouncedFilters.salaryMax) {
+        params.append("only_with_salary", "true");
       }
-      if (filters.salaryMax) {
-        params.append("salaryMax", filters.salaryMax.toString());
+
+      if (debouncedFilters.technologies.length > 0) {
+        params.append("text", debouncedFilters.technologies.join(" "));
       }
-      if (filters.currency) {
-        params.append("currency", filters.currency);
+      if (debouncedFilters.experience.length > 0) {
+        params.append("experience", debouncedFilters.experience.join(","));
       }
-      if (filters.technologies.length > 0) {
-        params.append("technologies", filters.technologies.join(","));
-      }
-      if (filters.experience.length > 0) {
-        params.append("experience", filters.experience.join(","));
-      }
-      if (filters.employment.length > 0) {
-        params.append("employment", filters.employment.join(","));
+      if (debouncedFilters.employment.length > 0) {
+        params.append("employment", debouncedFilters.employment.join(","));
       }
 
       try {
         setLoading(true);
+        console.log(`https://api.hh.ru/vacancies?${params}`);
         const response = await axios.get(
           `https://api.hh.ru/vacancies?${params}`
         );
         // Обновление состояния с вакансиями
-        setVacancies(response.data.items);
-        console.log(response.data.items)
         setTotalPages(Math.ceil(response.data.found / filters.itemsPerPage));
+        if (debouncedFilters.salaryMax) {
+          const filtered = response.data.items.filter(
+            (vacancy: VacancyItemModel) => {
+              if (!vacancy.salary) return false;
+              return vacancy.salary.to <= debouncedFilters.salaryMax!;
+            }
+          );
+          setVacancies(filtered);
+        } else {
+          setVacancies(response.data.items);
+        }
+        console.log(response.data);
       } catch (error) {
         console.error(error);
         setError("Error fetching vacancies");
@@ -76,7 +85,14 @@ const VacanciesTable = () => {
 
     handleFilterChange();
   }, [
-   filters,currentPage
+    debouncedFilters.employment,
+    debouncedFilters.experience,
+    filters.itemsPerPage,
+    filters.orderBy,
+    debouncedFilters.technologies,
+    currentPage,
+    debouncedFilters.salaryMax,
+    debouncedFilters.salaryMin,
   ]);
   /*  */
   const handlePageChange = (page: number) => {
@@ -99,10 +115,7 @@ const VacanciesTable = () => {
         Нажмите на вакансию, чтобы узнать подробнее
       </h1>
 
-      <VacancyFilters
-        setFilters={setFilters}
-        filters={filters}
-      />
+      <VacancyFilters setFilters={setFilters} filters={filters} />
       {vacancies.length !== 0 ? (
         <>
           <table className="w-full border border-gray-300">
