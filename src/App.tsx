@@ -1,7 +1,6 @@
 import { Header } from "@/components/Header/Header";
 import routes from "@/pages/routes";
 import { BrowserRouter as Router, Route, Routes } from "react-router";
-/* import { CoinsProvider } from 'context/VacanciesContext'; */
 
 function App() {
   return (
