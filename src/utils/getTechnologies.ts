@@ -1,4 +1,4 @@
-import { knownTechnologies } from "constants/technologies";
+import { knownTechnologies } from "@/constants/technologies";
 
 const TECHNOLOGY_NORMALIZATION: Record<string, string> = {
   golang: "Go",

@@ -1,4 +1,4 @@
-import VacanciesTable from "components/VacanciesTable/VacanciesTable";
+import VacanciesTable from "@/components/VacanciesTable/VacanciesTable";
 
 const Home = () => {
 

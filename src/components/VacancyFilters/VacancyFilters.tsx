@@ -1,12 +1,10 @@
-import MultiSelect from "components/MultiSelect/MultiSelect";
-import { knownTechnologies } from "constants/technologies";
-import {
-  employments,
-  experiences,
-} from "constants/vacancyConstants";
+import { employments, experiences } from "@/constants/vacancyConstants";
 import { Dispatch, SetStateAction } from "react";
-
-
+import { MultiSelector } from "../ui/multiselector";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
+import { sortOptions } from "@/constants/sortOptions";
+import SelectContainer from "../Select/SelectContainer";
 
 interface VacancyFilters {
   salaryMin?: number;
@@ -23,18 +21,13 @@ type VacancyFiltersProps = {
   setFilters: Dispatch<SetStateAction<VacancyFilters>>;
 };
 
-const VacancyFilters = ({
-  filters,
-  setFilters,
-}: VacancyFiltersProps) => {
- 
- 
-
+const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
   return (
-    <div className="filters-container">
+    <div className="my-5 flex flex-col gap-3">
       {/* Фильтр по зарплате */}
       <div className="salary-filter">
         <input
+          className="border border-border px-4 py-2"
           type="number"
           value={filters.salaryMin ?? ""}
           placeholder="Минимальная зарплата"
@@ -48,26 +41,19 @@ const VacancyFilters = ({
             }));
           }}
         />
-        <select
-          value={filters.orderBy}
-          onChange={(e) =>
-            setFilters((prev) => ({
-              ...prev,
-              orderBy: e.target.value,
-              page: 0,
-            }))
-          }
-        >
-          <option value="salary_desc">По убыванию дохода</option>
-          <option value="salary_asc">По возрастанию дохода</option>
-          <option value="publication_time">Свежие вакансии</option>
-          <option value="relevance">По соответствию</option>
-        </select>
       </div>
-
-      {/* Фильтр по технологиям */}
-      <MultiSelect
-        options={knownTechnologies}
+      <SelectContainer
+        value={filters.orderBy}
+        onChange={(value) =>
+          setFilters((prev) => ({
+            ...prev,
+            orderBy: value,
+            page: 0,
+          }))
+        }
+        items={sortOptions}
+      />
+      <MultiSelector
         selected={filters.technologies}
         onChange={(selected) =>
           setFilters((prev) => ({
@@ -79,48 +65,46 @@ const VacancyFilters = ({
       />
 
       {/* Фильтр по опыту */}
-      <div className="experience-filter">
+      <RadioGroup
+        value={filters.experience[0] || ""}
+        onValueChange={(value) => {
+          setFilters((prev) => ({
+            ...prev,
+            experience: [value],
+            page: 0,
+          }));
+        }}
+        className="flex flex gap-2 flex-wrap border border-border p-3 w-fit"
+      >
         {experiences.map((exp) => (
-          <label key={exp.id}>
-            <input
-              name="experience"
-              type="radio"
-              value={exp.id}
-              checked={filters.experience.includes(exp.id)}
-              onChange={(e) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  experience: [e.target.value],
-                  page: 0,
-                }));
-              }}
-            />
-            {exp.name}
-          </label>
+          <div key={exp.id} className="flex items-center space-x-2">
+            <RadioGroupItem value={exp.id} id={exp.id} />
+            <Label htmlFor={exp.id}>{exp.name}</Label>
+          </div>
         ))}
-      </div>
+      </RadioGroup>
+      {/*  */}
 
-      {/* Фильтр по типу занятости */}
-      <div className="employment-filter">
+      {/* фильтр по занятости */}
+      <RadioGroup
+        value={filters.employment[0] || ""}
+        onValueChange={(value) => {
+          setFilters((prev) => ({
+            ...prev,
+            employment: [value],
+            page: 0,
+          }));
+        }}
+        className="flex flex gap-2 flex-wrap border border-border p-3 w-fit"
+      >
         {employments.map((emp) => (
-          <label key={emp.id}>
-            <input
-              type="radio"
-              name="employment"
-              value={emp.id}
-              checked={filters.employment.includes(emp.id)}
-              onChange={(e) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  employment: [e.target.value],
-                  page: 0,
-                }));
-              }}
-            />
-            {emp.name}
-          </label>
+          <div key={emp.id} className="flex items-center space-x-2">
+            <RadioGroupItem value={emp.id} id={emp.id} />
+            <Label htmlFor={emp.id}>{emp.name}</Label>
+          </div>
         ))}
-      </div>
+      </RadioGroup>
+      {/*  */}
     </div>
   );
 };

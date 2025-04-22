@@ -1,10 +1,10 @@
 import axios from "axios";
-import { Button } from "components/Button/Button";
-import { CircleLoader } from "components/CircleLoader/CircleLoader";
+import { CircleLoader } from "@/components/CircleLoader/CircleLoader";
 import { FC, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router"
-import { VacancyItemModel } from "types/VacancyItemModel";
-import { convertVacancySalary } from "utils/convertVacancySalary";
+import { VacancyItemModel } from "@/types/VacancyItemModel";
+import { convertVacancySalary } from "@/utils/convertVacancySalary";
+import { Button } from "@/components/ui/button";
 
 
 const VacancyDetails: FC = () => {
@@ -55,7 +55,7 @@ const VacancyDetails: FC = () => {
     <div className="w-full h-96 p-0 md:p-4">
       <div className="mb-5">
         {vacancyData === undefined && <h1>Нет данных</h1>}
-        <Button onClick={navigateBack} className="mb-6">
+        <Button variant={"secondary"} onClick={navigateBack} className="mb-6">
           &lt;-
         </Button>
         <div className="flex items-center gap-2 m-auto">

@@ -2,9 +2,9 @@ import { lazy } from 'react';
 import { RouteObject } from 'react-router';
 
 // lazy page loading
-const HomePage = lazy(() => import('pages/Home/Home'));
-const ItemPage = lazy(() => import("pages/VacancyDetails/VacancyDetails"));
-const NotFoundPage = lazy(() => import('pages/NotFound/NotFound'));
+const HomePage = lazy(() => import('@/pages/Home/Home'));
+const ItemPage = lazy(() => import("@/pages/VacancyDetails/VacancyDetails"));
+const NotFoundPage = lazy(() => import('@/pages/NotFound/NotFound'));
 
 type AppRoute = RouteObject & {
   path: string;

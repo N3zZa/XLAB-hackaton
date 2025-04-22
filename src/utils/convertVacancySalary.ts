@@ -1,6 +1,6 @@
-import { VacancyItemModel } from "types/VacancyItemModel";
+import { VacancyItemModel } from "@/types/VacancyItemModel";
 import { convertToRUB } from "./convertCurrency";
-import { Currency } from "types/Currency";
+import { Currency } from "@/types/Currency";
 
 export const convertVacancySalary = (vacancy: VacancyItemModel|null): string => {
   if (!vacancy) return "Не указан"
