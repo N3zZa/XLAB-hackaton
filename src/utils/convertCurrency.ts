@@ -7,11 +7,13 @@ const exchangeRates: Record<Currency, number> = {
   USD: 82,
   EUR: 92,
   BYN: 27,
+  KZT: 0.15,
 };
 
 export const convertToRUB = (amount: number, currency: Currency): number|null => {
   if (amount != undefined) {
     const rate = exchangeRates[currency];
+    if (rate === undefined) return null
     return Math.round(amount * rate);
   } else {
     return null

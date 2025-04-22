@@ -64,6 +64,7 @@ const VacanciesTable = () => {
         );
         // Обновление состояния с вакансиями
         setVacancies(response.data.items);
+        console.log(response.data.items)
         setTotalPages(Math.ceil(response.data.found / filters.itemsPerPage));
       } catch (error) {
         console.error(error);
