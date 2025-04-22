@@ -1,8 +1,8 @@
 import axios from "axios";
-import VacancyFilters from "@/components/VacancyFilters/VacancyFilters";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useEffect, useState } from "react";
-import { VacancyItemModel } from "@/types/VacancyItemModel";
+import { useEffect, useRef, useState } from "react";
+import { VacancyFiltersModel, VacancyItemModel } from "@/types/VacancyModels";
+import { BELARUS_AREA_CODE, it_codes } from "@/constants/vacancyConstants";
 
 export const useFetchVacancies = () => {
   /* vacancies api data states */
@@ -16,16 +16,19 @@ export const useFetchVacancies = () => {
   /* ---------------- */
 
   /* data filters */
-  const [filters, setFilters] = useState<VacancyFilters>({
+  const [filters, setFilters] = useState<VacancyFiltersModel>({
     salaryMin: undefined,
-    salaryMax: undefined,
     technologies: [],
     experience: [],
     employment: [],
-    orderBy: "relevance",
+    orderBy: "publication_time",
     itemsPerPage: 20,
   });
   /* ------------ */
+
+  /* желательно придумать что то другое */
+  const isFirstRender = useRef(true);
+  /*  */
 
   /* debounce data */
   const debouncedFilters = useDebounce(filters, 700);
@@ -34,49 +37,44 @@ export const useFetchVacancies = () => {
     const handleFilterChange = async () => {
       try {
         setLoading(true);
-        // API запрос с актуальными фильтрами
-        const params = new URLSearchParams({
-          page: (currentPage - 1).toString(),
-          per_page: filters.itemsPerPage.toString(),
-          order_by: filters.orderBy,
-          professional_role: "96",
-        });
 
-        // Опциональные параметры с проверкой
+        const professionalRoleParams = it_codes
+          .map((role) => `professional_role=${role}`)
+          .join("&");
+
+        let query = `page=${currentPage - 1}&per_page=${
+          filters.itemsPerPage
+        }&order_by=${filters.orderBy}&area=${BELARUS_AREA_CODE}`;
+
         if (debouncedFilters.salaryMin) {
-          params.append("salary", debouncedFilters.salaryMin.toString());
-          params.append("only_with_salary", "true");
+          query += `&salary=${debouncedFilters.salaryMin}&only_with_salary=true`;
         } else if (debouncedFilters.salaryMax) {
-          params.append("only_with_salary", "true");
+          query += `&only_with_salary=true`;
         }
 
         if (debouncedFilters.technologies.length > 0) {
-          params.append("text", debouncedFilters.technologies.join(" "));
+          query += `&text=${debouncedFilters.technologies.join(" ")}`;
         }
+
         if (debouncedFilters.experience.length > 0) {
-          params.append("experience", debouncedFilters.experience.join(","));
+          query += `&experience=${debouncedFilters.experience.join(",")}`;
         }
+
         if (debouncedFilters.employment.length > 0) {
-          params.append("employment", debouncedFilters.employment.join(","));
+          query += `&employment=${debouncedFilters.employment.join(",")}`;
         }
-        
+
+        if (professionalRoleParams) {
+          query += `&${professionalRoleParams}`;
+        }
+
         const response = await axios.get(
-          `https://api.hh.ru/vacancies?${params}`
+          `https://api.hh.ru/vacancies?${query}`
         );
+
         // Обновление состояния с вакансиями
         setTotalPages(Math.ceil(response.data.found / filters.itemsPerPage));
-        if (debouncedFilters.salaryMax) {
-          const filtered = response.data.items.filter(
-            (vacancy: VacancyItemModel) => {
-              if (!vacancy.salary) return false;
-              return vacancy.salary.to <= debouncedFilters.salaryMax!;
-            }
-          );
-          setVacancies(filtered);
-        } else {
-          setVacancies(response.data.items);
-        }
-        console.log(response.data);
+        setVacancies(response.data.items);
       } catch (error) {
         console.error(error);
         setError("Error fetching vacancies");
@@ -96,6 +94,16 @@ export const useFetchVacancies = () => {
     debouncedFilters.salaryMax,
     debouncedFilters.salaryMin,
   ]);
+
+   useEffect(() => {
+     if (isFirstRender.current) {
+       isFirstRender.current = false;
+       return;
+     }
+
+     // Сбрасываем страницу на 1 при изменении фильтров
+     setCurrentPage(1);
+   }, [debouncedFilters]);
 
   useEffect(() => {
     if (error) {

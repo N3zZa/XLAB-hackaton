@@ -1,9 +1,11 @@
-import { VacancyItemModel } from "@/types/VacancyItemModel";
+import { VacancyItemModel } from "@/types/VacancyModels";
 import { convertToRUB } from "./convertCurrency";
 import { Currency } from "@/types/Currency";
 
-export const convertVacancySalary = (vacancy: VacancyItemModel|null): string => {
-  if (!vacancy) return "Не указан"
+export const convertVacancySalary = (
+  vacancy: VacancyItemModel | null
+): string => {
+  if (!vacancy) return "Не указан";
   if (
     vacancy.salary &&
     (vacancy.salary.from != null || vacancy.salary.to != null)
@@ -11,7 +13,7 @@ export const convertVacancySalary = (vacancy: VacancyItemModel|null): string => 
     const currency = vacancy.salary.currency as Currency;
     const convertedVCurFrom = convertToRUB(vacancy.salary.from, currency);
     const convertedVCurTo = convertToRUB(vacancy.salary.to, currency);
-    
+
     let result = "";
 
     if (convertedVCurFrom != null) {

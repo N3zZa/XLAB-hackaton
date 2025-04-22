@@ -1,3 +1,6 @@
+export const BELARUS_AREA_CODE = "16";
+export const it_codes = ["96", "160", "16", "112", "165"];
+
 export const employments = [
   {
     id: "full",

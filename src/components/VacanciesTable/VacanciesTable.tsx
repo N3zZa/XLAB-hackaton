@@ -16,9 +16,9 @@ const VacanciesTable = () => {
     setCurrentPage,
   } = useFetchVacancies();
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+  const handlePageChange = (distance: number) => {
+    if (currentPage >= 1 && currentPage <= totalPages) {
+      setCurrentPage(currentPage + distance);
     }
   };
 
@@ -31,7 +31,7 @@ const VacanciesTable = () => {
   }
 
   return (
-    <div className="p-4 max-w-full">
+    <div className="max-w-full">
       <h1 className="text-[32px] font-bold text-center mb-5">
         Нажмите на вакансию, чтобы узнать подробнее
       </h1>
@@ -40,7 +40,7 @@ const VacanciesTable = () => {
       {vacancies.length !== 0 ? (
         <>
           <div className="overflow-x-auto">
-            <table className="w-full border border-gray-300">
+            <table className="w-full border">
               <thead>
                 <tr>
                   <th className="p-2 border">Title</th>
@@ -63,20 +63,20 @@ const VacanciesTable = () => {
           <div className="flex gap-3 items-center w-fit mx-auto mt-3">
             <Button
               variant={"secondary"}
-              onClick={() => handlePageChange(currentPage - 1)}
+              onClick={() => handlePageChange(-1)}
               disabled={currentPage <= 1}
             >
-              Назад
+              &lt;-
             </Button>
             <span>
               Страница {currentPage} из {totalPages}
             </span>
             <Button
               variant={"secondary"}
-              onClick={() => handlePageChange(currentPage + 1)}
+              onClick={() => handlePageChange(1)}
               disabled={currentPage >= totalPages}
             >
-              Вперед
+              -&gt;
             </Button>
           </div>
         </>

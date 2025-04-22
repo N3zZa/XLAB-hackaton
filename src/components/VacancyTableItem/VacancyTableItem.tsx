@@ -1,6 +1,6 @@
 import { routesPaths } from "@/pages/routes";
 import { useNavigate } from "react-router";
-import { VacancyItemModel } from "@/types/VacancyItemModel";
+import { VacancyItemModel } from "@/types/VacancyModels";
 import { convertVacancySalary } from "@/utils/convertVacancySalary";
 import { formatDate } from "@/utils/formatDate";
 import { getTechnologies } from "@/utils/getTechnologies";
@@ -10,19 +10,18 @@ type VacancyTableItemProps = {
   vacancy: VacancyItemModel;
 };
 
-const VacancyTableItem = ({vacancy}: VacancyTableItemProps) => {
+const VacancyTableItem = ({ vacancy }: VacancyTableItemProps) => {
   const navigate = useNavigate();
-  const { name, snippet, employment, experience, published_at, description } = vacancy;
+  const { name, snippet, employment, experience, published_at, description } =
+    vacancy;
 
-    const technologies = getTechnologies(
-      name,
-      snippet?.requirement,
-      description
-    );
+  const technologies = getTechnologies(name, snippet?.requirement, description);
 
   const handleNavigate = () => {
-    navigate(`${routesPaths.vacancy}${vacancy.id}`, { state: { id: vacancy.id } })
-  }
+    navigate(`${routesPaths.vacancy}${vacancy.id}`, {
+      state: { id: vacancy.id },
+    });
+  };
 
   const experienceLevel = getExperienceLevels(
     name + snippet.requirement + description

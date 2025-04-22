@@ -5,29 +5,34 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { sortOptions } from "@/constants/sortOptions";
 import SelectContainer from "../Select/SelectContainer";
+import { VacancyFiltersModel } from "@/types/VacancyModels";
+import { Button } from "../ui/button";
 
-interface VacancyFilters {
-  salaryMin?: number;
-  salaryMax?: number;
-  technologies: string[];
-  experience: string[];
-  employment: string[];
-  orderBy: string;
-  itemsPerPage: number;
-}
 
 type VacancyFiltersProps = {
-  filters: VacancyFilters;
-  setFilters: Dispatch<SetStateAction<VacancyFilters>>;
+  filters: VacancyFiltersModel;
+  setFilters: Dispatch<SetStateAction<VacancyFiltersModel>>;
 };
 
 const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
+
+
+  const handleClearFilters = () => {
+    setFilters({
+      salaryMin: undefined,
+      technologies: [],
+      experience: [],
+      employment: [],
+      orderBy: "publication_time",
+      itemsPerPage: 50,
+    });
+  }
   return (
     <div className="my-5 flex flex-col gap-3">
       {/* Фильтр по зарплате */}
       <div className="salary-filter">
         <input
-          className="border border-border px-4 py-2"
+          className="border border-border px-4 py-2 outline-none"
           type="number"
           value={filters.salaryMin ?? ""}
           placeholder="Минимальная зарплата"
@@ -37,7 +42,6 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
             setFilters((prev) => ({
               ...prev,
               salaryMin: numValue,
-              page: 0,
             }));
           }}
         />
@@ -48,7 +52,6 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
           setFilters((prev) => ({
             ...prev,
             orderBy: value,
-            page: 0,
           }))
         }
         items={sortOptions}
@@ -59,7 +62,6 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
           setFilters((prev) => ({
             ...prev,
             technologies: selected,
-            page: 0,
           }))
         }
       />
@@ -71,7 +73,6 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
           setFilters((prev) => ({
             ...prev,
             experience: [value],
-            page: 0,
           }));
         }}
         className="flex flex gap-2 flex-wrap border border-border p-3 w-fit"
@@ -105,6 +106,7 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
         ))}
       </RadioGroup>
       {/*  */}
+      <Button className="w-fit" onClick={handleClearFilters}>Очистить фильтры</Button>
     </div>
   );
 };

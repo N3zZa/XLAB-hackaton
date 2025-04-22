@@ -1,19 +1,19 @@
 import axios from "axios";
 import { CircleLoader } from "@/components/CircleLoader/CircleLoader";
 import { FC, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router"
-import { VacancyItemModel } from "@/types/VacancyItemModel";
+import { Link, useLocation, useNavigate } from "react-router";
+import { VacancyDetailsModel } from "@/types/VacancyModels";
 import { convertVacancySalary } from "@/utils/convertVacancySalary";
 import { Button } from "@/components/ui/button";
-
+import noImage from "@/assets/noImage.svg"
+import { formatDate } from "@/utils/formatDate";
 
 const VacancyDetails: FC = () => {
-  const [vacancyData, setVacancyData] = useState<VacancyItemModel|null>(null);
+  const [vacancyData, setVacancyData] = useState<VacancyDetailsModel | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string|null>(null);
-  const {state} = useLocation();
+  const [error, setError] = useState<string | null>(null);
+  const { state } = useLocation();
   const navigate = useNavigate();
-  
 
   useEffect(() => {
     const fetchVacancyData = async () => {
@@ -23,7 +23,6 @@ const VacancyDetails: FC = () => {
         );
         // Обновление состояния с вакансиями
         setVacancyData(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
         setError("Error fetching vacancies");
@@ -36,7 +35,7 @@ const VacancyDetails: FC = () => {
   }, [state.id]);
 
   if (loading) {
-    return <CircleLoader />
+    return <CircleLoader />;
   }
 
   if (error) {
@@ -44,7 +43,7 @@ const VacancyDetails: FC = () => {
       <div>
         <h1 className="text-center">Error!</h1>
       </div>
-    )
+    );
   }
 
   const navigateBack = () => {
@@ -52,56 +51,71 @@ const VacancyDetails: FC = () => {
   };
 
   return (
-    <div className="w-full h-96 p-0 md:p-4">
-      <div className="mb-5">
-        {vacancyData === undefined && <h1>Нет данных</h1>}
-        <Button variant={"secondary"} onClick={navigateBack} className="mb-6">
-          &lt;-
-        </Button>
-        <div className="flex items-center gap-2 m-auto">
-          <h1 className="text-2xl font-bold">
-            {vacancyData?.name}{" "}
-          </h1>
-        </div>
-        <ul className="flex flex-col gap-2 mt-2">
-          <li>Уровень дохода: {convertVacancySalary(vacancyData)}</li>
-        </ul>
-      </div>
-      {/*    <div className="flex gap-4 mb-4">
-        {["d1", "h12", "h1"].map((int) => (
-          <Button
-            key={int}
-            variant={interval === int ? "blue" : "gray"}
-            onClick={() => handleInterval(int)}
-          >
-            {int}
-          </Button>
-        ))}
-      </div> */}
-      {/* <h1 className="text-xl font-bold">Price Chart ({interval})</h1>
-      {coinHistory.loading ? (
-        <CircleLoader />
+    <div className="w-full h-96 p-3 md:p-4">
+      {vacancyData === null ? (
+        <h1>Нет данных</h1>
       ) : (
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={coinHistory.history}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
-            <YAxis domain={["auto", "auto"]} />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="priceUsd"
-              stroke="#8884d8"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      )} */}
+        <div className="mb-5">
+          <Button variant={"secondary"} onClick={navigateBack} className="mb-6">
+            &lt;-
+          </Button>
+          <div className="flex gap-2 flex-col">
+            <div className="flex flex-col justify-between gap-2 sm:flex-row  sm:items-center sm:gap-0">
+              {" "}
+              <h1 className="text-2xl font-bold">{vacancyData.name}</h1>
+              <div className="flex items-center gap-3 bg-white text-secondary w-fit px-3 py-1 rounded-lg">
+                <h2 className="text-lg font-medium">
+                  {vacancyData.employer.name}{" "}
+                </h2>
+                <img
+                  className="w-[35px] md:w-[50px]"
+                  src={
+                    vacancyData.employer.logo_urls !== null
+                      ? vacancyData.employer.logo_urls.original
+                      : noImage
+                  }
+                  alt="companylogo"
+                />
+              </div>
+            </div>
+            <span className="text-gray-500">
+              Дата и время публикации: {formatDate(vacancyData.published_at)}
+            </span>
+            <h3>Местоположение: {vacancyData.area.name}</h3>
+          </div>
+          <ul className="flex flex-col gap-2 my-2">
+            <li>Уровень дохода: {convertVacancySalary(vacancyData)}</li>
+            <li>Занятость: {vacancyData.employment.name}</li>
+            <li>Опыт: {vacancyData.experience.name}</li>
+            <li>Рабочие часы: {vacancyData.working_hours[0].name}</li>
+            <li>
+              Ссылка на вакансию:{" "}
+              <Link className="underline" to={vacancyData.alternate_url}>
+                {vacancyData.alternate_url}
+              </Link>
+            </li>
+          </ul>
+          {vacancyData.key_skills.length !== 0 && (
+            <ul className="flex items-center flex-wrap gap-1">
+              {vacancyData.key_skills.map((skill, i) => (
+                <li
+                  className="py-1 px-2 bg-white text-secondary font-medium rounded-lg"
+                  key={skill.name + i}
+                >
+                  {skill.name}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p
+            className="bg-secondary p-4 rounded-xl my-2 leading-8"
+            dangerouslySetInnerHTML={{ __html: vacancyData.description }}
+          ></p>
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default VacancyDetails
+export default VacancyDetails;
