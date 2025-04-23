@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 export const Header: React.FC = () => {
  
   return (
-    <header className="flex flex-col gap-4 sm:p-4 py-4 px-0">
+    <header className="flex flex-col gap-4 sm:p-4 py-4 px-2">
       <div className="flex items-center justify-between">
         <Link to={"/"}>
           <h1 className='text-2xl'>RabotaByAnalyzer</h1>
