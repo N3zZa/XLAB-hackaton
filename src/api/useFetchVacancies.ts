@@ -3,6 +3,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useEffect, useRef, useState } from "react";
 import { VacancyFiltersModel, VacancyItemModel } from "@/types/VacancyModels";
 import { BELARUS_AREA_CODE, it_codes } from "@/constants/vacancyConstants";
+import { ITEMS_PER_PAGE } from "@/constants/PaginationTableConstants";
 
 export const useFetchVacancies = () => {
   /* vacancies api data states */
@@ -22,7 +23,7 @@ export const useFetchVacancies = () => {
     experience: [],
     employment: [],
     orderBy: "publication_time",
-    itemsPerPage: 20,
+    itemsPerPage: ITEMS_PER_PAGE,
   });
   /* ------------ */
 

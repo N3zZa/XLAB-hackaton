@@ -31,6 +31,7 @@ const RemoteVsOfficeChart: React.FC<Props> = ({ vacancies }) => {
     });
   });
 
+  /* данные для вставки в компонент Chart.js */
   const chartData: ChartData = {
     labels: Object.keys(formatCounts),
     datasets: [

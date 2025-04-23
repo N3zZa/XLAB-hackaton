@@ -7,6 +7,7 @@ import { sortOptions } from "@/constants/sortOptions";
 import SelectContainer from "../Select/SelectContainer";
 import { VacancyFiltersModel } from "@/types/VacancyModels";
 import { Button } from "../ui/button";
+import { ITEMS_PER_PAGE } from "@/constants/PaginationTableConstants";
 
 
 type VacancyFiltersProps = {
@@ -24,7 +25,7 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
       experience: [],
       employment: [],
       orderBy: "publication_time",
-      itemsPerPage: 50,
+      itemsPerPage: ITEMS_PER_PAGE,
     });
   }
   return (
@@ -46,6 +47,7 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
           }}
         />
       </div>
+      {/* order vacancies selector  */}
       <SelectContainer
         value={filters.orderBy}
         onChange={(value) =>
@@ -56,6 +58,8 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
         }
         items={sortOptions}
       />
+
+      {/* technologis selector  */}
       <MultiSelector
         selected={filters.technologies}
         onChange={(selected) =>
@@ -66,7 +70,7 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
         }
       />
 
-      {/* Фильтр по опыту */}
+      {/* Filter by experience */}
       <RadioGroup
         value={filters.experience[0] || ""}
         onValueChange={(value) => {
@@ -86,7 +90,7 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
       </RadioGroup>
       {/*  */}
 
-      {/* фильтр по занятости */}
+      {/* employment filter */}
       <RadioGroup
         value={filters.employment[0] || ""}
         onValueChange={(value) => {
@@ -106,7 +110,9 @@ const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
         ))}
       </RadioGroup>
       {/*  */}
-      <Button className="w-fit" onClick={handleClearFilters}>Очистить фильтры</Button>
+      <Button className="w-fit" onClick={handleClearFilters}>
+        Очистить фильтры
+      </Button>
     </div>
   );
 };

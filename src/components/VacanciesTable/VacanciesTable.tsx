@@ -36,7 +36,11 @@ const VacanciesTable = () => {
         Нажмите на вакансию, чтобы узнать подробнее
       </h1>
 
+      {/* filters */}
       <VacancyFilters setFilters={setFilters} filters={filters} />
+      {/* ------- */}
+
+      
       {vacancies.length !== 0 ? (
         <>
           <div className="overflow-x-auto">
@@ -60,6 +64,8 @@ const VacanciesTable = () => {
               </tbody>
             </table>
           </div>
+
+          {/* pagintaion buttons */}
           <div className="flex gap-3 items-center w-fit mx-auto mt-3">
             <Button
               variant={"secondary"}

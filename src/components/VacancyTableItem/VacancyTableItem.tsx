@@ -17,12 +17,15 @@ const VacancyTableItem = ({ vacancy }: VacancyTableItemProps) => {
 
   const technologies = getTechnologies(name, snippet?.requirement, description);
 
+
+  /* navigate to vacancy details */
   const handleNavigate = () => {
     navigate(`${routesPaths.vacancy}${vacancy.id}`, {
       state: { id: vacancy.id },
     });
   };
 
+  /* getting experience level of format: Junior, Middle, Senior,  */
   const experienceLevel = getExperienceLevels(
     name + snippet.requirement + description
   );

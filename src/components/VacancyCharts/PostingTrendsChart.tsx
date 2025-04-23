@@ -21,13 +21,15 @@ ChartJS.register(
   Legend
 );
 
-type Props = {
+type PostingTrendsChartProps = {
   vacancies: {
     published_at: string;
   }[];
 };
 
-const PostingTrendsChart: React.FC<Props> = ({ vacancies }) => {
+const PostingTrendsChart: React.FC<PostingTrendsChartProps> = ({
+  vacancies,
+}) => {
   const chartData: ChartData = useMemo(() => {
     const today = new Date();
     const dates = Array.from({ length: 7 }).map((_, i) =>
@@ -55,7 +57,9 @@ const PostingTrendsChart: React.FC<Props> = ({ vacancies }) => {
 
   return (
     <div className="w-full p-4 bg-white shadow rounded-lg">
-      <h3 className="text-lg font-semibold mb-2 text-background">Динамика публикаций</h3>
+      <h3 className="text-lg font-semibold mb-2 text-background">
+        Динамика публикаций
+      </h3>
       <Line data={chartData} />
     </div>
   );

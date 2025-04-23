@@ -1,11 +1,9 @@
 import { Header } from "@/components/Header/Header";
 import routes from "@/pages/routes";
 import { BrowserRouter as Router, Route, Routes } from "react-router";
-import { VacanciesContextProvider } from "./context/VacanciesContext";
 
 function App() {
   return (
-    <VacanciesContextProvider>
       <Router>
         <Header />
         <Routes>
@@ -14,7 +12,6 @@ function App() {
           ))}
         </Routes>
       </Router>
-    </VacanciesContextProvider>
   );
 }
 
