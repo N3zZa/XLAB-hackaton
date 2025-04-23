@@ -55,7 +55,7 @@ src/
 
 API: openapi от rabota.by
 
-1. /api/useFetchVacancies.tsx
+1. ## /api/useFetchVacancies.tsx
    Получение данных для таблицы с APIб возвращение этих данных и определение пагинации. Также тут прописана работа с фильтрами.
    Все данные вакансий загружаются с помощью axios.get(...) из https://api.hh.ru/vacancies
    Поддерживаются параметры:
@@ -67,11 +67,11 @@ API: openapi от rabota.by
 - page,per_page
 - order_by
 
-2. src/components/ VacanciesTable/
+2. ## src/components/ VacanciesTable/
    Вывод данных, полученных из /api/useFetchVacancies.tsx в табличном виде
-3. src/components/ VacancyCharts/ VacancyCharts.tsx
+3. ## src/components/ VacancyCharts/ VacancyCharts.tsx
    Получение данных для визуализации с API(1000 вакансий). Визуализация полученных данных по определенным свойствам вакансий(Формат работы, Динамика публикаций, Опыт работы).
-4. src/components/ VacancyFilters
+4. ## src/components/ VacancyFilters
    Функционал фильтрации табличных данных по зарплате, опыту, занятости, технологиям, а также сортировка:
 
 - Salary, only_with_salary
@@ -79,7 +79,7 @@ API: openapi от rabota.by
 - text
 - order_by
 
-5. src/pages/VacancyDetails/
+5. ## src/pages/VacancyDetails/
    Страница подробной информации об определенной вакансии, выбранной в таблице.
    На странице происходит вывод таких данных, как:
 
@@ -94,4 +94,4 @@ API: openapi от rabota.by
 - Ссылка на вакансию на rabota.by
 - Ключевые навыки
 - Описание
-Детали вакансии подгружаются отдельно из https://api.hh.ru/vacancies/{vacancy.id}
+### Детали вакансии подгружаются отдельно из https://api.hh.ru/vacancies/{vacancy.id}
