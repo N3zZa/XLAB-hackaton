@@ -17,7 +17,6 @@ type VacancyFiltersProps = {
 
 const VacancyFilters = ({ filters, setFilters }: VacancyFiltersProps) => {
 
-
   const handleClearFilters = () => {
     setFilters({
       salaryMin: undefined,

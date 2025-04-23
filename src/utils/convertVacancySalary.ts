@@ -2,6 +2,7 @@ import { VacancyItemModel } from "@/types/VacancyModels";
 import { convertToRUB } from "./convertCurrency";
 import { Currency } from "@/types/Currency";
 
+/* convering salary to format "CUR SALARY - CUR SALARY" */
 export const convertVacancySalary = (
   vacancy: VacancyItemModel | null
 ): string => {
