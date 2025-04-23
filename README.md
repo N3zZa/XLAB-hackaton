@@ -94,4 +94,4 @@ API: openapi от rabota.by
 - Ссылка на вакансию на rabota.by
 - Ключевые навыки
 - Описание
-  Детали вакансии подгружаются отдельно из https://api.hh.ru/vacancies/{vacancy.id}
+Детали вакансии подгружаются отдельно из https://api.hh.ru/vacancies/{vacancy.id}
